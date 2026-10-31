@@ -8,7 +8,7 @@ import { QRCodeSVG } from 'qrcode.react';
 const ShareModal = ({ isOpen, onClose, url }) => {
   const [copied, setCopied] = React.useState(false);
   const isLocalhost = url.includes('localhost') || url.includes('127.0.0.1');
-  const networkUrl = "https://tanushkarumanchi07-gif.github.io/faithflow/";
+  const networkUrl = "https://faithflow-navy.vercel.app/";
   // Use current origin if not localhost, otherwise use the network IP
   const displayUrl = isLocalhost ? networkUrl : url;
 
