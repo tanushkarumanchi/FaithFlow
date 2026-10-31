@@ -118,12 +118,27 @@ useEffect(() => {
 
   const shareUrl = window.location.origin;
 
-  useEffect(() => {
-    getBooks().then(data => {
+ 
+useEffect(() => {
+  const loadBooks = async () => {
+    try {
+      const data = await getBooks();
       setBooks(data);
-      if (data.length > 0) setSelectedBook(data[0]);
-    });
-  }, []);
+
+      if (data.length > 0) {
+        setSelectedBook(data[0]);
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Failed to load Bible books:', error);
+      setLoading(false);
+    }
+  };
+
+  loadBooks();
+}, []);
+
 
   useEffect(() => {
     if (selectedBook) {
