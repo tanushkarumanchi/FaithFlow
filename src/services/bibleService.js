@@ -10,14 +10,33 @@ export const fetchBibleData = async (lang, bookId) => {
       const url = lang === 'en'
         ? 'https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/Genesis.json'
         : 'https://raw.githubusercontent.com/aruljohn/Bible-telugu/master/Genesis.json';
-      const fallbackRes = await fetch(url);
-      return await fallbackRes.json();
+      
+const fallbackRes = await fetch(url);
+
+if (!fallbackRes.ok) {
+  throw new Error('Failed to load Genesis fallback');
+}
+
+return await fallbackRes.json();
+
     }
     throw error;
   }
 };
 
+
 export const getBooks = async () => {
-  const response = await fetch('data/books.json');
-  return await response.json();
+  try {
+    const response = await fetch('data/books.json');
+
+    if (!response.ok) {
+      throw new Error('Failed to load books');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading books:', error);
+    throw error;
+  }
 };
+
