@@ -140,19 +140,46 @@ useEffect(() => {
 }, []);
 
 
-  useEffect(() => {
-    if (selectedBook) {
-      setLoading(true);
-      const enPromise = fetchBibleData('en', selectedBook.id).catch(() => null);
-      const tePromise = fetchBibleData('te', selectedBook.id).catch(() => null);
+  
+useEffect(() => {
+  if (!selectedBook) return;
 
-      Promise.all([enPromise, tePromise]).then(([en, te]) => {
+  let cancelled = false;
+
+  const loadChapterData = async () => {
+    setLoading(true);
+
+    try {
+      const [en, te] = await Promise.all([
+        fetchBibleData('en', selectedBook.id),
+        fetchBibleData('te', selectedBook.id),
+      ]);
+
+      if (!cancelled) {
         setBookDataEn(en);
         setBookDataTe(te);
+      }
+    } catch (error) {
+      console.error('Failed to load Bible data:', error);
+
+      if (!cancelled) {
+        setBookDataEn(null);
+        setBookDataTe(null);
+      }
+    } finally {
+      if (!cancelled) {
         setLoading(false);
-      });
+      }
     }
-  }, [selectedBook]);
+  };
+
+  loadChapterData();
+
+  return () => {
+    cancelled = true;
+  };
+}, [selectedBook]);
+
 
   const handleNextChapter = () => {
     if (selectedBook && currentChapter < selectedBook.chapters) {
