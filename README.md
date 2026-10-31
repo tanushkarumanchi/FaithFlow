@@ -4,7 +4,7 @@ FaithFlow is a web application designed to make reading the Bible simple and acc
 
 🌐 Live Demo
 
-"Open FaithFlow" (https://faithflow-navy.vercel.app/)
+[Open FaithFlow](https://faith-flow-pied.vercel.app/)
 
 ✨ Features
 
