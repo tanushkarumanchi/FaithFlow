@@ -41,13 +41,13 @@ const ShareModal = ({ isOpen, onClose, url }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020711]/85 backdrop-blur-xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#020711]/85 p-4 backdrop-blur-xl">
       <div className="relative w-full max-w-md rounded-[28px] border border-[#c9a96e]/20 bg-[#101c2d] p-8 shadow-2xl">
 
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 rounded-full p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
           aria-label="Close share window"
+          className="absolute right-5 top-5 rounded-full p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
         >
           <X size={20} />
         </button>
@@ -111,7 +111,7 @@ const App = () => {
 
   const shareUrl = window.location.origin;
 
-  // PWA installation support
+  // PWA installation
   useEffect(() => {
     const handleInstallPrompt = (event) => {
       event.preventDefault();
@@ -240,6 +240,10 @@ const App = () => {
     staggered: 'Staggered'
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((previous) => !previous);
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-[#080f1c] text-[#eee8dc]">
 
@@ -256,15 +260,17 @@ const App = () => {
         onSelectBook={(book) => {
           setSelectedBook(book);
           setCurrentChapter(1);
+          setIsSidebarCollapsed(true);
         }}
         isCollapsed={isSidebarCollapsed}
+        onToggle={() => setIsSidebarCollapsed(true)}
       />
 
       {/* Main content */}
       <main
         className={`relative flex min-h-screen min-w-0 flex-col transition-all duration-300 ${
           isSidebarCollapsed
-            ? 'ml-0 w-full md:ml-20 md:w-[calc(100%-5rem)]'
+            ? 'ml-0 w-full'
             : 'ml-0 w-full md:ml-[300px] md:w-[calc(100%-300px)]'
         }`}
       >
@@ -273,12 +279,15 @@ const App = () => {
         <header className="sticky top-0 z-20 flex min-h-[88px] items-center justify-between gap-3 border-b border-[#c9a96e]/10 bg-[#080f1c]/90 px-4 py-4 backdrop-blur-2xl sm:px-6 md:px-9">
 
           <div className="flex min-w-0 items-center gap-3">
+
+            {/* Sidebar toggle */}
             <button
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="shrink-0 rounded-xl border border-[#c9a96e]/15 bg-white/[0.03] p-3 text-[#c9a96e] transition hover:bg-[#c9a96e]/10"
-              aria-label="Toggle sidebar"
+              onClick={toggleSidebar}
+              aria-label={isSidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+              title={isSidebarCollapsed ? 'Show Bible books' : 'Hide sidebar'}
+              className="shrink-0 rounded-xl border border-[#c9a96e]/20 bg-[#c9a96e]/[0.07] p-3 text-[#c9a96e] transition hover:bg-[#c9a96e]/15"
             >
-              <Menu size={19} />
+              <Menu size={20} />
             </button>
 
             <div className="min-w-0">
@@ -304,12 +313,13 @@ const App = () => {
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
 
-            {/* Language button */}
+            {/* Language */}
             <button
               onClick={cycleLanguage}
               className="flex items-center gap-2 rounded-xl border border-[#c9a96e]/20 bg-[#c9a96e]/[0.07] px-3 py-3 text-sm font-medium text-[#d9bd8c] transition hover:bg-[#c9a96e]/15 md:px-4"
             >
               <Languages size={17} />
+
               <span className="hidden sm:inline">
                 {languageLabel[languageMode]}
               </span>
@@ -383,7 +393,7 @@ const App = () => {
             <div className="mx-auto mt-6 h-px w-20 bg-gradient-to-r from-transparent via-[#c9a96e]/70 to-transparent" />
           </div>
 
-          {/* Loading screen */}
+          {/* Loading */}
           {loading ? (
             <div className="flex min-h-[45vh] flex-col items-center justify-center gap-6">
               <div className="relative flex h-16 w-16 items-center justify-center">
@@ -418,9 +428,9 @@ const App = () => {
         {/* Bottom navigation */}
         {!loading && selectedBook && (
           <div
-            className={`pointer-events-none fixed bottom-6 right-0 z-30 flex justify-center px-3 transition-all duration-300 ${
+            className={`pointer-events-none fixed bottom-6 right-0 z-20 flex justify-center px-3 transition-all duration-300 ${
               isSidebarCollapsed
-                ? 'left-0 md:left-20'
+                ? 'left-0'
                 : 'left-0 md:left-[300px]'
             }`}
           >
