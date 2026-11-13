@@ -679,7 +679,7 @@ const App = () => {
 
         {!loading && selectedBook && (
           <div
-            className={`fixed bottom-5 right-0 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-300 ${
+            className={`fixed bottom-4 right-0 z-40 flex flex-col items-center gap-3 px-3 transition-all duration-300 ${
               isSidebarCollapsed ? 'left-0' : 'left-0 md:left-[300px]'
             }`}
           >
@@ -703,8 +703,10 @@ const App = () => {
               )}
             </AnimatePresence>
 
-            {/* ANTIQUE GOLD BOTTOM NAVIGATION */}
-            <div className="flex w-full max-w-[440px] items-center justify-around gap-1 rounded-[22px] border border-[#f0d99e] bg-gradient-to-b from-[#e4c982] to-[#c9a653] p-2 shadow-[0_12px_35px_rgba(0,0,0,0.45),0_0_22px_rgba(214,182,109,0.22)] sm:gap-3 sm:p-3">
+            {/* LUXURY MIDNIGHT NAVIGATION */}
+            <div className="relative flex w-full max-w-[460px] items-center justify-between gap-1 overflow-hidden rounded-[22px] border border-[#c6a76a]/40 bg-[#111e32]/95 p-2 shadow-[0_14px_45px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl sm:gap-2 sm:p-2.5">
+              <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#c6a76a]/50 to-transparent" />
+
               {featureItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeFeature === item.id;
@@ -724,16 +726,16 @@ const App = () => {
                     }
                     aria-label={item.label}
                     aria-pressed={isActive}
-                    className={`relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 transition-colors ${
+                    className={`relative z-0 flex min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-[16px] px-1 py-2.5 transition-colors duration-300 sm:py-3 ${
                       isActive
-                        ? 'text-[#f3d99e]'
-                        : 'text-[#18243a] hover:text-[#5a421b]'
+                        ? 'text-[#f0d59c]'
+                        : 'text-[#aeb9c9] hover:text-[#e8d4ad]'
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="faithflow-active-feature"
-                        className="absolute inset-0 rounded-xl border border-[#e5c47d]/40 bg-[#17243b] shadow-inner"
+                        className="absolute inset-0 -z-10 rounded-[16px] border border-[#c6a76a]/35 bg-gradient-to-b from-[#c6a76a]/20 to-[#c6a76a]/[0.07] shadow-[0_0_18px_rgba(198,167,106,0.10)]"
                         transition={{
                           type: 'spring',
                           stiffness: 380,
@@ -743,18 +745,36 @@ const App = () => {
                     )}
 
                     <span className="relative">
-                      <Icon size={20} strokeWidth={2.2} />
+                      <Icon
+                        size={21}
+                        strokeWidth={isActive ? 2.2 : 1.7}
+                        className="transition-all duration-300"
+                      />
 
                       {counts[item.id] > 0 && (
-                        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full border border-[#e7ca85] bg-[#17243b] px-1 text-[9px] font-bold text-[#f3d99e]">
+                        <span className="absolute -right-2 -top-2 flex h-[15px] min-w-[15px] items-center justify-center rounded-full border border-[#111e32] bg-[#c6a76a] px-1 text-[9px] font-bold leading-none text-[#101827]">
                           {counts[item.id] > 99 ? '99+' : counts[item.id]}
                         </span>
                       )}
                     </span>
 
-                    <span className="relative text-[9px] font-bold tracking-wide sm:text-[10px]">
+                    <span className={`relative whitespace-nowrap text-[9px] tracking-wide transition-all duration-300 sm:text-[10px] ${
+                      isActive ? 'font-bold' : 'font-medium'
+                    }`}>
                       {item.label}
                     </span>
+
+                    {isActive && (
+                      <motion.span
+                        layoutId="faithflow-active-dot"
+                        className="absolute bottom-1 h-[3px] w-3 rounded-full bg-[#d8bb83] shadow-[0_0_8px_rgba(216,187,131,0.65)]"
+                        transition={{
+                          type: 'spring',
+                          stiffness: 380,
+                          damping: 30
+                        }}
+                      />
+                    )}
                   </button>
                 );
               })}
