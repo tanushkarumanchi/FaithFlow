@@ -1,84 +1,158 @@
+
 import React, { useState } from 'react';
-import { Book as BookIcon, Search, ChevronRight } from 'lucide-react';
+import {
+  BookOpen,
+  Search,
+  ChevronRight,
+  Crown
+} from 'lucide-react';
 
-const Sidebar = ({ books, selectedBook, onSelectBook, isCollapsed }) => {
-    const [search, setSearch] = useState('');
+const Sidebar = ({
+  books,
+  selectedBook,
+  onSelectBook,
+  isCollapsed
+}) => {
+  const [search, setSearch] = useState('');
 
-    const filteredBooks = books.filter(b =>
-        b.en.toLowerCase().includes(search.toLowerCase()) ||
-        b.te.includes(search)
-    );
+  const filteredBooks = books.filter((book) =>
+    book.en.toLowerCase().includes(search.toLowerCase()) ||
+    book.te.includes(search)
+  );
 
-    return (
-        <aside
-            className={`glass-morphism h-screen fixed left-0 top-0 z-30 transition-all duration-300 flex flex-col overflow-hidden ${isCollapsed ? 'w-20' : 'w-72'
+  return (
+    <aside
+      className={`fixed left-0 top-0 z-30 flex h-screen flex-col overflow-hidden border-r border-[#c9a96e]/15 bg-[#0b1524] transition-all duration-300 ${
+        isCollapsed ? 'w-20' : 'w-72'
+      }`}
+    >
+      {/* Brand */}
+      <div className="border-b border-[#c9a96e]/15 p-6">
+        <div className="mb-7 flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#c9a96e]/30 bg-[#c9a96e]/10 text-[#d8bb83]">
+            <BookOpen size={23} />
+          </div>
+
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <h1 className="luxury-heading text-2xl tracking-wide text-[#ead9b6]">
+                FaithFlow
+              </h1>
+              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.28em] text-[#a98b5b]">
+                Walk in His Word
+              </p>
+            </div>
+          )}
+        </div>
+
+        {!isCollapsed && (
+          <div className="mb-4 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b69a6c]">
+            <Crown size={13} />
+            The Holy Scriptures
+          </div>
+        )}
+
+        {/* Search */}
+        <div className="relative">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#a98b5b]"
+          />
+
+          <input
+            type="text"
+            placeholder={isCollapsed ? '' : 'Find a book...'}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            disabled={isCollapsed}
+            className={`w-full rounded-xl border border-[#c9a96e]/15 bg-white/[0.035] py-3 pl-10 pr-3 text-sm text-[#eee8dc] outline-none transition placeholder:text-slate-500 focus:border-[#c9a96e]/50 focus:bg-white/[0.06] ${
+              isCollapsed ? 'opacity-0' : 'opacity-100'
+            }`}
+          />
+        </div>
+      </div>
+
+      {/* Book list */}
+      <div className="custom-scrollbar flex-1 space-y-1 overflow-y-auto p-3">
+        {!isCollapsed && (
+          <p className="mb-3 px-3 pt-2 text-[9px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+            Books of the Bible
+          </p>
+        )}
+
+        {filteredBooks.map((book, index) => {
+          const isSelected = selectedBook?.id === book.id;
+
+          return (
+            <button
+              key={book.id}
+              onClick={() => onSelectBook(book)}
+              title={isCollapsed ? `${book.en} / ${book.te}` : undefined}
+              className={`group relative flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-200 ${
+                isSelected
+                  ? 'border border-[#c9a96e]/25 bg-[#c9a96e]/[0.10] text-[#ead9b6]'
+                  : 'border border-transparent text-slate-400 hover:border-white/[0.05] hover:bg-white/[0.04] hover:text-[#eee8dc]'
+              }`}
+            >
+              {/* Book initial */}
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition ${
+                  isSelected
+                    ? 'border border-[#c9a96e]/30 bg-[#c9a96e]/15 text-[#e4c68e]'
+                    : 'bg-white/[0.045] text-slate-400 group-hover:bg-white/[0.08]'
                 }`}
-        >
-            {/* Brand area */}
-            <div className="p-6 border-b border-white/10 flex-shrink-0">
-                {!isCollapsed ? (
-                    <div className="flex items-center gap-3 mb-6">
-                        <h1 className="text-xl font-bold tracking-tight text-white">FaithFlow</h1>
-                    </div>
-                ) : (
-                    <div className="flex justify-center mb-6">
-                        <BookIcon className="w-6 h-6 text-indigo-500" />
-                    </div>
-                )}
+              >
+                {book.en[0]}
+              </div>
 
-                <div className="relative">
-                    <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none`} />
-                    <input
-                        type="text"
-                        placeholder={isCollapsed ? "" : "Search books..."}
-                        className={`w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all ${isCollapsed ? 'opacity-0' : 'opacity-100'
-                            }`}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        disabled={isCollapsed}
-                    />
+              {!isCollapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className={`truncate text-sm font-semibold ${
+                    isSelected ? 'text-[#ead9b6]' : ''
+                  }`}>
+                    {book.en}
+                  </p>
+
+                  <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                    {book.te}
+                  </p>
                 </div>
-            </div>
+              )}
 
-            {/* Book List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 flex flex-col space-y-1">
-                {filteredBooks.map((book) => (
-                    <button
-                        key={book.id}
-                        onClick={() => onSelectBook(book)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all group relative ${selectedBook?.id === book.id
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                            : 'hover:bg-white/5 text-slate-400 hover:text-white'
-                            }`}
-                    >
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${selectedBook?.id === book.id ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'
-                            }`}>
-                            {book.en[0]}
-                        </div>
+              {!isCollapsed && isSelected && (
+                <ChevronRight
+                  size={16}
+                  className="shrink-0 text-[#c9a96e]"
+                />
+              )}
 
-                        {!isCollapsed && (
-                            <div className="flex-1 text-left overflow-hidden">
-                                <p className="text-sm font-semibold truncate">{book.en}</p>
-                                <p className={`text-[10px] truncate opacity-70 font-telugu-text`}>
-                                    {book.te}
-                                </p>
-                            </div>
-                        )}
+              {isSelected && (
+                <span className="absolute bottom-3 left-0 top-3 w-[2px] rounded-full bg-[#d6b477]" />
+              )}
+            </button>
+          );
+        })}
 
-                        {!isCollapsed && selectedBook?.id === book.id && (
-                            <ChevronRight className="w-4 h-4 flex-shrink-0" />
-                        )}
+        {filteredBooks.length === 0 && !isCollapsed && (
+          <p className="px-3 py-8 text-center text-xs text-slate-500">
+            No books found.
+          </p>
+        )}
+      </div>
 
-                        {isCollapsed && (
-                            <div className="absolute left-full ml-4 px-3 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-xl border border-white/10">
-                                {book.en} / {book.te}
-                            </div>
-                        )}
-                    </button>
-                ))}
-            </div>
-        </aside>
-    );
+      {/* Footer */}
+      {!isCollapsed && (
+        <div className="border-t border-[#c9a96e]/10 p-5">
+          <p className="luxury-heading text-center text-sm italic text-[#b69a6c]">
+            His Word. Our Light.
+          </p>
+          <p className="mt-2 text-center text-[9px] uppercase tracking-[0.2em] text-slate-600">
+            FaithFlow Bible
+          </p>
+        </div>
+      )}
+    </aside>
+  );
 };
 
 export default Sidebar;
