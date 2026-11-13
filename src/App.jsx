@@ -20,9 +20,7 @@ import {
   Bookmark,
   StickyNote,
   Highlighter,
-  Trash2,
-  Clock,
-  BookMarked
+  Trash2
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -124,7 +122,13 @@ const featureItems = [
   { id: 'highlights', label: 'Highlights', icon: Highlighter }
 ];
 
-const SavedVerseList = ({ items, emptyText, onOpen, onRemove, showNote = false }) => {
+const SavedVerseList = ({
+  items,
+  emptyText,
+  onOpen,
+  onRemove,
+  showNote = false
+}) => {
   if (!items.length) {
     return (
       <div className="flex flex-col items-center py-9 text-center">
@@ -203,10 +207,10 @@ const FeaturePanel = ({
   const [title, subtitle] = titles[activeFeature] || titles.history;
 
   const content = {
-    history: history,
-    bookmarks: bookmarks,
-    notes: notes,
-    highlights: highlights
+    history,
+    bookmarks,
+    notes,
+    highlights
   }[activeFeature] || [];
 
   const emptyText = {
@@ -234,7 +238,9 @@ const FeaturePanel = ({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="luxury-heading text-xl text-[#ead9b6]">{title}</h3>
+          <h3 className="luxury-heading text-xl text-[#ead9b6]">
+            {title}
+          </h3>
           <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
         </div>
       </div>
@@ -276,13 +282,15 @@ const App = () => {
   const shareUrl = window.location.origin;
 
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (event) => {
+    const handleInstallPrompt = (event) => {
       event.preventDefault();
       setDeferredPrompt(event);
-    });
+    };
+
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', () => {});
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
     };
   }, []);
 
@@ -293,9 +301,13 @@ const App = () => {
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
+
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') setDeferredPrompt(null);
+
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
   };
 
   useEffect(() => {
@@ -304,9 +316,11 @@ const App = () => {
     const loadBooks = async () => {
       try {
         const data = await getBooks();
+
         if (cancelled) return;
 
         setBooks(data || []);
+
         if (data?.length > 0) {
           setSelectedBook(data[0]);
         } else {
@@ -319,7 +333,10 @@ const App = () => {
     };
 
     loadBooks();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -342,6 +359,7 @@ const App = () => {
         }
       } catch (error) {
         console.error('Failed to load Bible data:', error);
+
         if (!cancelled) {
           setBookDataEn(null);
           setBookDataTe(null);
@@ -352,7 +370,10 @@ const App = () => {
     };
 
     loadChapterData();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedBook]);
 
   useEffect(() => {
@@ -416,6 +437,7 @@ const App = () => {
 
   const handleNote = (item) => {
     const existing = notes.find((saved) => saved.id === item.id);
+
     const noteText = window.prompt(
       `Your note for ${item.bookName} ${item.chapter}:${item.verse}`,
       existing?.note || ''
@@ -424,7 +446,9 @@ const App = () => {
     if (noteText === null) return;
 
     if (!noteText.trim()) {
-      setNotes((previous) => previous.filter((saved) => saved.id !== item.id));
+      setNotes((previous) =>
+        previous.filter((saved) => saved.id !== item.id)
+      );
       return;
     }
 
@@ -435,13 +459,16 @@ const App = () => {
   };
 
   const openSavedItem = (item) => {
-    const book = books.find((entry) => String(entry.id) === String(item.bookId));
+    const book = books.find(
+      (entry) => String(entry.id) === String(item.bookId)
+    );
 
     if (!book) return;
 
     setSelectedBook(book);
     setCurrentChapter(Number(item.chapter) || 1);
     setActiveFeature(null);
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -453,7 +480,9 @@ const App = () => {
       highlights: setHighlights
     };
 
-    setters[feature]?.((previous) => previous.filter((item) => item.id !== id));
+    setters[feature]?.((previous) =>
+      previous.filter((item) => item.id !== id)
+    );
   };
 
   const handleTouchStart = (event) => {
@@ -464,6 +493,7 @@ const App = () => {
     if (touchStart === null) return;
 
     const difference = event.changedTouches[0].clientX - touchStart;
+
     const currentIndex = featureItems.findIndex(
       (item) => item.id === activeFeature
     );
@@ -523,7 +553,9 @@ const App = () => {
               <h1 className="luxury-heading truncate text-lg text-[#f0e5d0] sm:text-xl md:text-2xl">
                 {selectedBook?.en || 'FaithFlow'}
                 <span className="mx-2 text-[#8c7653]">·</span>
-                <span className="text-[#c9a96e]">Chapter {currentChapter}</span>
+                <span className="text-[#c9a96e]">
+                  Chapter {currentChapter}
+                </span>
               </h1>
 
               <p className="truncate text-xs text-slate-500">
@@ -538,7 +570,9 @@ const App = () => {
               className="flex items-center gap-2 rounded-xl border border-[#c9a96e]/20 bg-[#c9a96e]/[0.07] px-3 py-3 text-sm font-medium text-[#d9bd8c] transition hover:bg-[#c9a96e]/15 md:px-4"
             >
               <Languages size={17} />
-              <span className="hidden sm:inline">{languageLabel[languageMode]}</span>
+              <span className="hidden sm:inline">
+                {languageLabel[languageMode]}
+              </span>
             </button>
 
             <div className="flex items-center rounded-xl border border-white/10 bg-white/[0.035] p-1">
@@ -557,7 +591,10 @@ const App = () => {
 
               <button
                 onClick={handleNextChapter}
-                disabled={!selectedBook || currentChapter === selectedBook.chapters}
+                disabled={
+                  !selectedBook ||
+                  currentChapter === selectedBook.chapters
+                }
                 className="rounded-lg p-2 text-[#c9a96e] transition hover:bg-white/10 disabled:opacity-20"
                 aria-label="Next chapter"
               >
@@ -666,7 +703,8 @@ const App = () => {
               )}
             </AnimatePresence>
 
-            <div className="flex w-full max-w-[440px] items-center justify-around gap-1 rounded-[22px] border border-[#c9a96e]/25 bg-[#101c2d]/95 p-2 shadow-[0_15px_50px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:gap-3 sm:p-3">
+            {/* ANTIQUE GOLD BOTTOM NAVIGATION */}
+            <div className="flex w-full max-w-[440px] items-center justify-around gap-1 rounded-[22px] border border-[#f0d99e] bg-gradient-to-b from-[#e4c982] to-[#c9a653] p-2 shadow-[0_12px_35px_rgba(0,0,0,0.45),0_0_22px_rgba(214,182,109,0.22)] sm:gap-3 sm:p-3">
               {featureItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeFeature === item.id;
@@ -681,33 +719,40 @@ const App = () => {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setActiveFeature(
-                      isActive ? null : item.id
-                    )}
+                    onClick={() =>
+                      setActiveFeature(isActive ? null : item.id)
+                    }
                     aria-label={item.label}
                     aria-pressed={isActive}
                     className={`relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 transition-colors ${
-                      isActive ? 'text-[#f0d49b]' : 'text-slate-400 hover:text-[#e6d2ad]'
+                      isActive
+                        ? 'text-[#f3d99e]'
+                        : 'text-[#18243a] hover:text-[#5a421b]'
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="faithflow-active-feature"
-                        className="absolute inset-0 rounded-xl border border-[#c9a96e]/30 bg-[#c9a96e]/[0.12]"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        className="absolute inset-0 rounded-xl border border-[#e5c47d]/40 bg-[#17243b] shadow-inner"
+                        transition={{
+                          type: 'spring',
+                          stiffness: 380,
+                          damping: 30
+                        }}
                       />
                     )}
 
                     <span className="relative">
-                      <Icon size={19} />
+                      <Icon size={20} strokeWidth={2.2} />
+
                       {counts[item.id] > 0 && (
-                        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c9a96e] px-1 text-[9px] font-bold text-[#101827]">
+                        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full border border-[#e7ca85] bg-[#17243b] px-1 text-[9px] font-bold text-[#f3d99e]">
                           {counts[item.id] > 99 ? '99+' : counts[item.id]}
                         </span>
                       )}
                     </span>
 
-                    <span className="relative text-[9px] font-semibold tracking-wide sm:text-[10px]">
+                    <span className="relative text-[9px] font-bold tracking-wide sm:text-[10px]">
                       {item.label}
                     </span>
                   </button>
