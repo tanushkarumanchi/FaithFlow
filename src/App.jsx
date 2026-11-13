@@ -25,10 +25,10 @@ const ShareModal = ({ isOpen, onClose, url }) => {
 
   if (!isOpen) return null;
 
-  const displayUrl = url.includes('localhost') ||
-    url.includes('127.0.0.1')
-    ? SITE_URL
-    : url;
+  const displayUrl =
+    url.includes('localhost') || url.includes('127.0.0.1')
+      ? SITE_URL
+      : url;
 
   const handleCopy = async () => {
     try {
@@ -47,6 +47,7 @@ const ShareModal = ({ isOpen, onClose, url }) => {
         <button
           onClick={onClose}
           className="absolute right-5 top-5 rounded-full p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+          aria-label="Close share window"
         >
           <X size={20} />
         </button>
@@ -155,7 +156,10 @@ const App = () => {
         }
       } catch (error) {
         console.error('Failed to load Bible books:', error);
-        if (!cancelled) setLoading(false);
+
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
@@ -193,7 +197,9 @@ const App = () => {
           setBookDataTe(null);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
@@ -223,6 +229,7 @@ const App = () => {
   const cycleLanguage = () => {
     const modes = ['en', 'te', 'dual', 'staggered'];
     const currentIndex = modes.indexOf(languageMode);
+
     setLanguageMode(modes[(currentIndex + 1) % modes.length]);
   };
 
@@ -234,7 +241,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#080f1c] text-[#eee8dc]">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#080f1c] text-[#eee8dc]">
 
       {/* Background atmosphere */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -256,17 +263,19 @@ const App = () => {
       {/* Main content */}
       <main
         className={`relative flex min-h-screen min-w-0 flex-col transition-all duration-300 ${
-          isSidebarCollapsed ? 'pl-20' : 'pl-72'
+          isSidebarCollapsed
+            ? 'ml-0 w-full md:ml-20 md:w-[calc(100%-5rem)]'
+            : 'ml-0 w-full md:ml-[300px] md:w-[calc(100%-300px)]'
         }`}
       >
 
         {/* Header */}
-        <header className="sticky top-0 z-20 flex min-h-[88px] items-center justify-between gap-4 border-b border-[#c9a96e]/10 bg-[#080f1c]/85 px-6 py-4 backdrop-blur-2xl md:px-9">
+        <header className="sticky top-0 z-20 flex min-h-[88px] items-center justify-between gap-3 border-b border-[#c9a96e]/10 bg-[#080f1c]/90 px-4 py-4 backdrop-blur-2xl sm:px-6 md:px-9">
 
-          <div className="flex min-w-0 items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="rounded-xl border border-[#c9a96e]/15 bg-white/[0.03] p-3 text-[#c9a96e] transition hover:bg-[#c9a96e]/10"
+              className="shrink-0 rounded-xl border border-[#c9a96e]/15 bg-white/[0.03] p-3 text-[#c9a96e] transition hover:bg-[#c9a96e]/10"
               aria-label="Toggle sidebar"
             >
               <Menu size={19} />
@@ -277,7 +286,7 @@ const App = () => {
                 THE HOLY SCRIPTURES
               </p>
 
-              <h1 className="luxury-heading truncate text-xl text-[#f0e5d0] md:text-2xl">
+              <h1 className="luxury-heading truncate text-lg text-[#f0e5d0] sm:text-xl md:text-2xl">
                 {selectedBook?.en || 'FaithFlow'}
                 <span className="mx-2 text-[#8c7653]">·</span>
                 <span className="text-[#c9a96e]">
@@ -293,7 +302,7 @@ const App = () => {
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2 md:gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
 
             {/* Language button */}
             <button
@@ -317,7 +326,7 @@ const App = () => {
                 <ChevronLeft size={19} />
               </button>
 
-              <span className="w-8 text-center text-sm font-semibold text-[#eee8dc]">
+              <span className="w-7 text-center text-sm font-semibold text-[#eee8dc]">
                 {currentChapter}
               </span>
 
@@ -354,16 +363,16 @@ const App = () => {
         </header>
 
         {/* Reader area */}
-        <section className="relative flex-1 px-4 pb-32 pt-8 md:px-8 md:pt-12">
+        <section className="relative w-full flex-1 px-4 pb-32 pt-8 sm:px-6 md:px-8 md:pt-12">
 
           {/* Welcome heading */}
-          <div className="mx-auto mb-10 max-w-4xl text-center">
+          <div className="mx-auto mb-10 w-full max-w-4xl text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#c9a96e]/15 bg-[#c9a96e]/[0.05] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#c9a96e]">
               <Sparkles size={13} />
               A moment in the Word
             </div>
 
-            <h2 className="luxury-heading text-3xl text-[#f0e5d0] md:text-5xl">
+            <h2 className="luxury-heading text-3xl text-[#f0e5d0] sm:text-4xl md:text-5xl">
               Find Peace in His Word
             </h2>
 
@@ -386,6 +395,7 @@ const App = () => {
                 <p className="luxury-heading text-xl text-[#e7d5b2]">
                   Preparing Scripture
                 </p>
+
                 <p className="mt-2 text-xs tracking-wide text-slate-500">
                   A peaceful moment awaits...
                 </p>
@@ -407,14 +417,19 @@ const App = () => {
 
         {/* Bottom navigation */}
         {!loading && selectedBook && (
-          <div className="fixed bottom-6 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
-            <div className={`pointer-events-auto flex items-center gap-8 rounded-2xl border border-[#c9a96e]/20 bg-[#101c2d]/90 px-6 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl transition-all duration-300 ${
-              isSidebarCollapsed ? 'ml-20' : 'ml-72'
-            }`}>
+          <div
+            className={`pointer-events-none fixed bottom-6 right-0 z-30 flex justify-center px-3 transition-all duration-300 ${
+              isSidebarCollapsed
+                ? 'left-0 md:left-20'
+                : 'left-0 md:left-[300px]'
+            }`}
+          >
+            <div className="pointer-events-auto flex max-w-full items-center gap-3 rounded-2xl border border-[#c9a96e]/20 bg-[#101c2d]/95 px-3 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:gap-6 sm:px-6">
+
               <button
                 onClick={handlePrevChapter}
                 disabled={currentChapter === 1}
-                className="flex items-center gap-2 text-xs font-semibold tracking-wider text-[#d8bd8c] transition hover:text-white disabled:opacity-25"
+                className="flex items-center gap-1 text-[10px] font-semibold tracking-wider text-[#d8bd8c] transition hover:text-white disabled:opacity-25 sm:gap-2 sm:text-xs"
               >
                 <ChevronLeft size={17} />
                 PREVIOUS
@@ -422,7 +437,7 @@ const App = () => {
 
               <div className="h-5 w-px bg-[#c9a96e]/20" />
 
-              <span className="text-xs text-slate-400">
+              <span className="whitespace-nowrap text-xs text-slate-400">
                 {currentChapter} / {selectedBook.chapters}
               </span>
 
@@ -431,7 +446,7 @@ const App = () => {
               <button
                 onClick={handleNextChapter}
                 disabled={currentChapter === selectedBook.chapters}
-                className="flex items-center gap-2 text-xs font-semibold tracking-wider text-[#d8bd8c] transition hover:text-white disabled:opacity-25"
+                className="flex items-center gap-1 text-[10px] font-semibold tracking-wider text-[#d8bd8c] transition hover:text-white disabled:opacity-25 sm:gap-2 sm:text-xs"
               >
                 NEXT
                 <ChevronRight size={17} />
